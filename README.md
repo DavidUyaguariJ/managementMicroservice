@@ -9,18 +9,14 @@ El proyecto permite realizar operaciones de alta, baja, modificación y consulta
 ## Características
 
 - **Gestión de Productos**: Permite agregar, eliminar, editar y consultar productos.
-- **Interfaz de Usuario**: Aplicación backend construida con Spring Boot para manejar las solicitudes y respuestas.
 - **Base de Datos**: Conexión a base de datos relacional (MySQL) para almacenar los datos del inventario.
 - **API REST**: Expone un conjunto de endpoints REST para interactuar con el sistema.
-- **Autenticación y Seguridad**: Implementación de autenticación básica para proteger las operaciones sensibles.
 
 ## Tecnologías Utilizadas
 
 - **Spring Boot**: Framework principal para construir la aplicación.
 - **Spring Data JPA**: Para manejar la persistencia en base de datos.
 - **MySQL**: Base de datos relacional para almacenar los productos.
-- **Spring Security**: Para gestión de seguridad y autenticación.
-- **Swagger/OpenAPI**: Para documentación de la API REST (si está configurado).
 
 ## Instalación
 
