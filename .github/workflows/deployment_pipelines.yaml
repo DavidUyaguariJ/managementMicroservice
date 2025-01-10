@@ -33,7 +33,7 @@ jobs:
           docker-compose build
       - name: Add tag
         run: |
-          docker tag ${{ secrets.DOCKER_USERNAME }}/backend-microservice:${{ github.sha }}
+          docker tag backend-microservice:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/backend-microservice:${{ github.sha }}
       - name: Publish image
         run: |
           docker push ${{ secrets.DOCKER_USERNAME }}/backend-microservice:${{ github.sha }}
