@@ -30,11 +30,13 @@ jobs:
 
       - name: Build image
         run: |
-          docker-compose build --platform linux --tag daviduyaguarij/backend-microservice:${{ github.sha }} -f src/docker-compose.yaml .
-
+          docker-compose build
+      - name: Add tag
+        run: |
+          docker tag ${{ secrets.DOCKER_USERNAME }}/backend-microservice:${{ github.sha }}
       - name: Publish image
         run: |
-          docker-compose push daviduyaguarij/backend-microservice:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/backend-microservice:${{ github.sha }}
 
       - name: Print tag
         run: |
