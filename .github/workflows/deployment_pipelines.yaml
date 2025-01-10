@@ -3,12 +3,12 @@ name: Build, Push to Dockerhub
 on:
   push:
     branches: [main]
-    
+
     paths:
       - 'src/**'
 
 jobs:
-  deploy:
+  docker:
     name: Docker build
     runs-on: ubuntu-latest
 
