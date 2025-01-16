@@ -40,7 +40,7 @@ public class InventoryService implements IInvetoryService{
 
     @Override
     public boolean editInventory (InventoryModel inventory){
-        if(inventoryRepository.existsById(inventory.getId_inventory())){
+        if(inventoryRepository.existsById(inventory.getIdInventory())){
             inventoryRepository.save(inventory);
             return true;
         }
