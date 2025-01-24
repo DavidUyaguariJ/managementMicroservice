@@ -14,8 +14,7 @@ import java.util.UUID;
 @Entity
 public class InventoryModel {
     @Id
-    @Column(unique = true, nullable = false)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idInventory;
     private UUID idProduct;
     private Integer quantity;
