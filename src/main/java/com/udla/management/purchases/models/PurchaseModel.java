@@ -1,4 +1,4 @@
-package com.udla.management.tickets.models;
+package com.udla.management.purchases.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -8,14 +8,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Entity
-public class TicketModel {
+public class PurchaseModel {
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private Long id;
-    private String title;
-    private String description;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long idPurchase;
+    private UUID idSupplier;
+    private UUID idProduct;
+    private int quantity;
 }

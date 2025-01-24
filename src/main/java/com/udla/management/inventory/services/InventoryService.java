@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,9 @@ public class InventoryService implements IInvetoryService{
 
     @Override
     public boolean saveToInventory(InventoryModel inventory){
+        if(inventory.getQuantity()<0){
+            return false;
+        }
         inventoryRepository.save(inventory);
         return true;
     };
@@ -40,11 +45,15 @@ public class InventoryService implements IInvetoryService{
 
     @Override
     public boolean editInventory (InventoryModel inventory){
-        if(inventoryRepository.existsById(inventory.getIdInventory())){
+        InventoryModel inventoryValue= inventoryRepository.findById(inventory.getIdInventory()).orElse(null);
+        if(inventoryValue!=null && (inventoryValue.getQuantity()-inventory.getQuantity())>0){
             inventoryRepository.save(inventory);
             return true;
         }
         return false;
     };
-}
 
+    public InventoryModel findInventoryByProduct(UUID idProduct) {
+        return inventoryRepository.findByIdProduct(idProduct).orElse(null);
+    }
+}
