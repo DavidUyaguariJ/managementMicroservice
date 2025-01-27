@@ -45,8 +45,8 @@ public class InventoryService implements IInvetoryService{
 
     @Override
     public boolean editInventory (InventoryModel inventory){
-        InventoryModel inventoryValue= inventoryRepository.findById(inventory.getIdInventory()).orElse(null);
-        if(inventoryValue!=null && (inventoryValue.getQuantity()-inventory.getQuantity())>0){
+        InventoryModel inventoryValue= inventoryRepository.findById(inventory.getIdeInventory()).orElse(null);
+        if(inventoryValue!=null ){
             inventoryRepository.save(inventory);
             return true;
         }
@@ -54,6 +54,6 @@ public class InventoryService implements IInvetoryService{
     };
 
     public InventoryModel findInventoryByProduct(UUID idProduct) {
-        return inventoryRepository.findByIdProduct(idProduct).orElse(null);
+        return inventoryRepository.findByIdeProduct(idProduct).orElse(null);
     }
 }

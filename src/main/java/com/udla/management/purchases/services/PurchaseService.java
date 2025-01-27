@@ -24,9 +24,10 @@ public class PurchaseService implements IPurchaseService {
     @Override
     public boolean savePurchase(PurchaseModel purchase) {
         boolean saveInventory = false;
-        InventoryModel inventoryModel = inventoryService.findInventoryByProduct(purchase.getIdProduct());
+        InventoryModel inventoryModel = inventoryService.findInventoryByProduct(purchase.getIdeProduct());
         if (inventoryModel == null) {
-            inventoryModel.setIdProduct(purchase.getIdProduct());
+            inventoryModel = new InventoryModel();
+            inventoryModel.setIdeProduct(purchase.getIdeProduct());
             inventoryModel.setQuantity(purchase.getQuantity());
             saveInventory = inventoryService.saveToInventory(inventoryModel);
         } else {
@@ -44,7 +45,7 @@ public class PurchaseService implements IPurchaseService {
     public boolean deletePurchase(Long id) {
         if (purchaseRepository.existsById(id)) {
             PurchaseModel purchase = purchaseRepository.findById(id).orElse(null);
-            InventoryModel inventoryModel = inventoryService.findInventoryByProduct(purchase.getIdProduct());
+            InventoryModel inventoryModel = inventoryService.findInventoryByProduct(purchase.getIdeProduct());
             if (inventoryModel.getQuantity() - purchase.getQuantity() < 0) {
                 return false;
             }
@@ -63,17 +64,22 @@ public class PurchaseService implements IPurchaseService {
 
     @Override
     public boolean editPurchase(PurchaseModel purchase) {
-        InventoryModel inventoryModel = inventoryService.findInventoryByProduct(purchase.getIdProduct());
+        InventoryModel inventoryModel = inventoryService.findInventoryByProduct(purchase.getIdeProduct());
         if (inventoryModel == null) {
             return false;
         }
-        int quantity = inventoryModel.getQuantity() - purchase.getQuantity();
+        int quantity=0;
+        if(inventoryModel.getQuantity()>purchase.getQuantity()){
+            quantity=inventoryModel.getQuantity() - purchase.getQuantity();
+        }else if(inventoryModel.getQuantity()<purchase.getQuantity()){
+            quantity=purchase.getQuantity()-inventoryModel.getQuantity();
+        }
         if (quantity < 0) {
             return false;
         }
         boolean saveInventory = inventoryService.editInventory(inventoryModel);
         if (saveInventory) {
-            if (purchaseRepository.existsById(purchase.getIdPurchase())) {
+            if (purchaseRepository.existsById(purchase.getIdePurchase())) {
                 purchaseRepository.save(purchase);
                 return true;
             }

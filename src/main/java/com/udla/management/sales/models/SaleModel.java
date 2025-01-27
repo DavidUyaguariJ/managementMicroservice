@@ -17,9 +17,9 @@ import java.util.UUID;
 public class SaleModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idSale;
+    private Long ideSale;
 
-    private UUID idClient;
-    private UUID idProduct;
+    private UUID ideClient;
+    private UUID ideProduct;
     private Integer quantity;
 }
