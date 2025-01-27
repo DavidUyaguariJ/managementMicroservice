@@ -15,7 +15,7 @@ import java.util.UUID;
 public class InventoryModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idInventory;
-    private UUID idProduct;
+    private Long ideInventory;
+    private UUID ideProduct;
     private Integer quantity;
 }

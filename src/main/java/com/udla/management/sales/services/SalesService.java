@@ -25,9 +25,9 @@ public class SalesService implements ISalesService{
     @Override
     public boolean saveSale(SaleModel sale){
         boolean saveInventory=false;
-        InventoryModel inventoryModel = inventoryService.findInventoryByProduct(sale.getIdProduct());
+        InventoryModel inventoryModel = inventoryService.findInventoryByProduct(sale.getIdeProduct());
         if(inventoryModel == null){
-            inventoryModel.setIdProduct(sale.getIdProduct());
+            inventoryModel.setIdeProduct(sale.getIdeProduct());
             inventoryModel.setQuantity(sale.getQuantity());
             saveInventory = inventoryService.saveToInventory(inventoryModel);
         }else{
@@ -45,7 +45,7 @@ public class SalesService implements ISalesService{
     public boolean deleteSale(Long id){
         if(salesRepository.existsById(id)){
             SaleModel sale= salesRepository.findById(id).orElse(null);
-            InventoryModel inventoryModel = inventoryService.findInventoryByProduct(sale.getIdProduct());
+            InventoryModel inventoryModel = inventoryService.findInventoryByProduct(sale.getIdeProduct());
             if(inventoryModel.getQuantity()-sale.getQuantity()<0){
                 return false;
             }
@@ -64,14 +64,14 @@ public class SalesService implements ISalesService{
 
     @Override
     public boolean editSale(SaleModel sale){
-        InventoryModel inventoryModel = inventoryService.findInventoryByProduct(sale.getIdProduct());
+        InventoryModel inventoryModel = inventoryService.findInventoryByProduct(sale.getIdeProduct());
         if(inventoryModel == null) return false;
         if( inventoryModel.getQuantity()-sale.getQuantity() < 0){
             return false;
         }
         boolean saveInventory = inventoryService.editInventory(inventoryModel);
         if(saveInventory){
-            if(salesRepository.existsById(sale.getIdSale())){
+            if(salesRepository.existsById(sale.getIdeSale())){
                 salesRepository.save(sale);
                 return true;
             }
