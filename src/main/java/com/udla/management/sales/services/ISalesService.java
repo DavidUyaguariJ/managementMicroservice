@@ -1,5 +1,6 @@
 package com.udla.management.sales.services;
 
+import com.udla.management.exceptions.ManagementException;
 import com.udla.management.sales.models.SaleModel;
 
 import java.util.List;
@@ -9,11 +10,11 @@ public interface ISalesService {
 
     public List<SaleModel> getSales();
 
-    public boolean saveSale(SaleModel sales);
+    public void createSale(SaleModel sales) throws ManagementException;
 
-    public boolean deleteSale(Long id);
+    public void deleteSale(Long id) throws ManagementException;
 
-    public SaleModel findSale(Long id);
+    public SaleModel getSaleById(Long id) throws ManagementException;
 
-    public boolean editSale (SaleModel inventory);
+    public void updateSale (SaleModel inventory) throws ManagementException;
 }
