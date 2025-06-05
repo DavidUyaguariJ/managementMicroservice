@@ -98,7 +98,7 @@ jobs:
         run: |
           ibmcloud ks cluster config --cluster udla-aplications-cluster
           kubectl config current-context
-          kubectl create deployment management-microservice --image=daviduyaguarij/backend-microservice:${{ github.sha }} --dry-run -o yaml > deployment.yaml
+          kubectl create deployment management-microservice --image=index.docker.io/daviduyaguarij/backend-microservice:${{ github.sha }} --dry-run -o yaml > deployment.yaml
           kubectl apply -f deployment.yaml
           kubectl rollout status deployment/management-microservice
           kubectl create service loadbalancer management-microservice --tcp=8080:8080 --dry-run -o yaml > service.yaml
