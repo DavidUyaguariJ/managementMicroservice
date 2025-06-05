@@ -93,8 +93,6 @@ jobs:
       - name: Authenticate with IBM Cloud CLI
         run: |
           ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r us-south -g Default
-          ibmcloud cr region-set us-south
-          ibmcloud cr login
 
       - name: Deploy to IKS
         run: |
