@@ -111,7 +111,7 @@ jobs:
         run: |
           ibmcloud ks cluster config --cluster udla-aplications-cluster
           kubectl config current-context
-          kubectl create deployment management --image=docker.io/daviduyaguarij/backend-microservice:${{ github.sha }} --dry-run=client -o yaml > deployment.yaml
+          kubectl create deployment management --image=us.icr.io/udla-applications-cr/management-microservice:${{ github.sha }} --dry-run=client -o yaml > deployment.yaml
           kubectl apply -f deployment.yaml
           kubectl rollout status deployment/management
           kubectl create service loadbalancer management --tcp=8080:8080 --dry-run -o yaml > service.yaml
