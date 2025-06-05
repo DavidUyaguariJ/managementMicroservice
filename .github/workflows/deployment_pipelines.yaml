@@ -4,9 +4,23 @@ on:
   push:
     branches: [ main ]
 
+env:
+  GITHUB_SHA: ${{ github.sha }}
+  IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
+  IBM_CLOUD_REGION: us-south
+  IMAGE_NAME: backend-microservice
+  IKS_CLUSTER: udla-aplication-cluster
+  DEPLOYMENT_NAME: management-microservice
+  PORT: 8080
+
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_URL: ${{ secrets.DB_URL }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
