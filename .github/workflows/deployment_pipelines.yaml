@@ -31,24 +31,24 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Build with Maven
-        run: mvn -B package
+      - name: Build (skip tests)
+        run: mvn -B clean package -DskipTests=true
 
-      - name: Upload build artifacts
+      - name: Upload entire project directory
         uses: actions/upload-artifact@v4
         with:
-          name: target-files
-          path: target/
+          name: project-files
+          path: .
 
   test:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Download build artifacts
+      - name: Download project files
         uses: actions/download-artifact@v4
         with:
-          name: target-files
-          path: target/
+          name: project-files
+          path: project # 👈 Lo descarga en una subcarpeta
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -57,8 +57,8 @@ jobs:
           distribution: 'temurin'
 
       - name: Run tests
+        working-directory: ./project # 👈 Nos movemos al directorio con el pom.xml
         run: mvn -B test
-
   docker:
     needs: test
     runs-on: ubuntu-latest
