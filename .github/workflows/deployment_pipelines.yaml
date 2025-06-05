@@ -5,17 +5,9 @@ on:
     branches: [ main ]
 
 env:
-  GITHUB_SHA: ${{ github.sha }}
-  IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
   DB_USER: ${{ secrets.DB_USER }}
   DB_URL: ${{ secrets.DB_URL }}
   DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-  IBM_CLOUD_REGION: us-south
-  IMAGE_NAME: backend-microservice
-  IKS_CLUSTER: udla-aplication-cluster
-  DEPLOYMENT_NAME: management-microservice
-  PORT: 8080
-
 
 jobs:
   build:
@@ -48,7 +40,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: project-files
-          path: project # 👈 Lo descarga en una subcarpeta
+          path: project
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -57,7 +49,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Run tests
-        working-directory: ./project # 👈 Nos movemos al directorio con el pom.xml
+        working-directory: ./project
         run: mvn -B test
   docker:
     needs: test
@@ -81,3 +73,36 @@ jobs:
           context: .
           push: true
           tags: daviduyaguarij/backend-microservice:${{ github.sha }}
+
+    deploy:
+      needs: docker
+      name: Deploy to cluster
+      runs-on: ubuntu-latest
+      environment: production
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Install IBM Cloud CLI
+          run: |
+            curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
+            ibmcloud --version
+            ibmcloud config --check-version=false
+            ibmcloud plugin install -f kubernetes-service
+
+        - name: Authenticate with IBM Cloud CLI
+          run: |
+            ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r "us-south" -g default
+            ibmcloud cr region-set "${IBM_CLOUD_REGION}"
+            ibmcloud cr login
+
+        - name: Deploy to IKS
+          run: |
+            ibmcloud ks cluster config --cluster udla-aplication-cluster
+            kubectl config current-context
+            kubectl create deployment $DEPLOYMENT_NAME --image=daviduyaguarij/backend-microservice:${{ github.sha }} --dry-run -o yaml > deployment.yaml
+            kubectl apply -f deployment.yaml
+            kubectl rollout status deployment/$DEPLOYMENT_NAME
+            kubectl create service loadbalancer management-microservice --tcp=8080:8080 --dry-run -o yaml > service.yaml
+            kubectl apply -f service.yaml
+            kubectl get services -o wide
