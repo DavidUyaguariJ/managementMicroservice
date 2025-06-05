@@ -6,7 +6,6 @@ COPY src ./src
 RUN mvn clean package -D skipTests
 #Etapa 2:
 FROM openjdk:21-jdk-slim
-FROM openjdk:21-jdk-alpine
 ARG JAR_FILE=target/*.jar
 WORKDIR /app
 COPY --from=builder /app/${JAR_FILE} app.jar
