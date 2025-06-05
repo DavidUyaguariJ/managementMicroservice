@@ -96,7 +96,7 @@ jobs:
 
       - name: Deploy to IKS
         run: |
-          ibmcloud ks cluster config --cluster udla-aplication-cluster
+          ibmcloud ks cluster config --cluster udla-aplications-cluster
           kubectl config current-context
           kubectl create deployment $DEPLOYMENT_NAME --image=daviduyaguarij/backend-microservice:${{ github.sha }} --dry-run -o yaml > deployment.yaml
           kubectl apply -f deployment.yaml
