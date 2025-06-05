@@ -54,6 +54,7 @@ jobs:
 
 
   push-registry:
+    needs: test
     name: Push to Registry
     runs-on: ubuntu-latest
     environment: production
@@ -77,7 +78,7 @@ jobs:
 
       - name: Build with Docker
         run: |
-          docker build -t us.icr.io/udla-applications-cr/management-microservice:${{ github.sha }}
+          docker build -t us.icr.io/udla-applications-cr/management-microservice:${{ github.sha }} .
 
       - name: Push the image to ICR
         run: |
