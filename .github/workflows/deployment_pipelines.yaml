@@ -89,11 +89,11 @@ jobs:
           ibmcloud --version
           ibmcloud config --check-version=false
           ibmcloud plugin install -f kubernetes-service
-
+z
       - name: Authenticate with IBM Cloud CLI
         run: |
-          ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r "us-south" -g default
-          ibmcloud cr region-set "${IBM_CLOUD_REGION}"
+          ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r us-south -g default
+          ibmcloud cr region-set us-south
           ibmcloud cr login
 
       - name: Deploy to IKS
