@@ -64,7 +64,7 @@ class SalesServiceTest {
 
     @Test
     public void whenSaleIsNull_thenThrowException() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(NullPointerException.class, () -> {
             salesService.createSale(null);
         });
     }

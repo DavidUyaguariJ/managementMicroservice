@@ -7,6 +7,9 @@ on:
 env:
   GITHUB_SHA: ${{ github.sha }}
   IBM_CLOUD_API_KEY: ${{ secrets.IBM_CLOUD_API_KEY }}
+  DB_USER: ${{ secrets.DB_USER }}
+  DB_URL: ${{ secrets.DB_URL }}
+  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
   IBM_CLOUD_REGION: us-south
   IMAGE_NAME: backend-microservice
   IKS_CLUSTER: udla-aplication-cluster
@@ -17,10 +20,6 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      DB_USER: ${{ secrets.DB_USER }}
-      DB_URL: ${{ secrets.DB_URL }}
-      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
