@@ -97,7 +97,6 @@ jobs:
           ibmcloud plugin install -f kubernetes-service
           ibmcloud plugin install -f container-registry
 
-
       - name: Authenticate with IBM Cloud CLI
         run: |
           ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r us-south -g Default
