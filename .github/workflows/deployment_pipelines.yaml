@@ -71,7 +71,7 @@ jobs:
       - name: Build container image
         run: docker build -t registry.digitalocean.com/${{ secrets.REGISTRY_NAME }}/backend-microservice:$(echo $GITHUB_SHA | head -c7) .
 
-      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+      - name: Log in to DigitalOcean Container Registry
         run: doctl registry login --expiry-seconds 1200
 
       - name: Push image to DigitalOcean Container Registry
@@ -86,6 +86,9 @@ jobs:
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Log in to DigitalOcean Container Registry
+        run: doctl registry login --expiry-seconds 1200
 
       - name: Deploy cluster
         run: |
