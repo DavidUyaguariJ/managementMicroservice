@@ -60,7 +60,6 @@ jobs:
 
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Install IBM Cloud CLI
         run: |
           curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
