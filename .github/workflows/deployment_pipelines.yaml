@@ -4,11 +4,6 @@ on:
   push:
     branches: [ main ]
 
-env:
-  DB_USER: ${{ secrets.DB_USER }}
-  DB_URL: ${{ secrets.DB_URL }}
-  DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -52,12 +47,10 @@ jobs:
         working-directory: ./project
         run: mvn -B test
 
-
   push-registry:
     needs: test
     name: Push to Registry
     runs-on: ubuntu-latest
-    environment: production
     steps:
 
       - name: Checkout
@@ -89,7 +82,6 @@ jobs:
     needs: push-registry
     name: Deploy to cluster
     runs-on: ubuntu-latest
-    environment: production
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -113,7 +105,9 @@ jobs:
         run: |
           ibmcloud ks cluster config --cluster udla-aplications-cluster
           kubectl config current-context
-          kubectl create deployment management --image=us.icr.io/udla-applications-cr/management-microservice:${{ github.sha }} --dry-run=client -o yaml > deployment.yaml
+          kubectl create deployment management \
+          --image=us.icr.io/udla-applications-cr/management-microservice:${{ github.sha }} --dry-run=client -o yaml > deployment.yaml .
+          kubectl set env deployment/management DB_URL=${{ secrets.DB_URL }} DB_USER=${{ secrets.DB_USER }} DB_PASSWORD=${{ secrets.DB_PASSWORD }}
           kubectl apply -f deployment.yaml
           kubectl rollout status deployment/management
           kubectl create service loadbalancer management --tcp=8080:8080 --dry-run -o yaml > service.yaml
