@@ -57,27 +57,22 @@ jobs:
     name: Push to Registry
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Set up QEMU
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
-      -
-        name: Set up Docker Build
-        uses: docker/setup-buildx-action@v3
-      -
-        name: Login to Docker Hub
-        uses: docker/login-action@v3
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-      -
-        name: Build and push
-        uses: docker/build-push-action@v5
-        with:
-          push: true
-          tags: daviduyaguarij/backend-microservice:${{ github.sha }}
-      - name: Get tag
-        run: |
-          echo ${{ github.sha }}
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
+      - name: Build container image
+        run: docker build -t ${{ secrets.REGISTRY_NAME }}/backend-microservice:$(echo $GITHUB_SHA | head -c7) .
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1200
+
+      - name: Push image to DigitalOcean Container Registry
+        run: docker push ${{ secrets.REGISTRY_NAME }}/backend-microservice:$(echo $GITHUB_SHA | head -c7)
 
   deploy:
     needs: push-registry
@@ -89,12 +84,18 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
       - name: Deploy cluster
         run: |
           doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
           kubectl config current-context
           kubectl create deployment management \
-          --image=docker.io/daviduyaguarij/management-microservice:${{ github.sha }} --dry-run=client -o yaml > deployment.yaml
+          --image= ${{ secrets.REGISTRY_NAME }}/management-microservice:${{ github.sha }} --dry-run=client -o yaml > deployment.yaml
           kubectl apply -f deployment.yaml
           kubectl set env deployment/management \
             DB_URL="${{ secrets.DB_URL }}" DB_USER="${{ secrets.DB_USER }}" DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
