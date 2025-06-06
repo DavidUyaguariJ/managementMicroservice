@@ -57,6 +57,9 @@ jobs:
     name: Push to Registry
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -73,7 +76,7 @@ jobs:
 
       - name: Push image to DigitalOcean Container Registry
         run: docker push ${{ secrets.REGISTRY_NAME }}/backend-microservice:$(echo $GITHUB_SHA | head -c7)
-
+        
   deploy:
     needs: push-registry
     name: Deploy to cluster
