@@ -86,13 +86,13 @@ jobs:
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-          
+
       - name: Deploy cluster
         run: |
           doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
           kubectl config current-context
           kubectl create deployment management \
-          --image= registry.digitalocean.com/${{ secrets.REGISTRY_NAME }}/management-microservice:${{ github.sha }} --dry-run=client -o yaml > deployment.yaml
+          --image=registry.digitalocean.com/${{ secrets.REGISTRY_NAME }}/management-microservice:${{ github.sha }} --dry-run=client -o yaml > deployment.yaml
           kubectl apply -f deployment.yaml
           kubectl set env deployment/management \
             DB_URL="${{ secrets.DB_URL }}" DB_USER="${{ secrets.DB_USER }}" DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
