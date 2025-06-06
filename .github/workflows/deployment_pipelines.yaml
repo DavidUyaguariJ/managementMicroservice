@@ -3,7 +3,6 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main ]
-
 env:
   DB_USER: ${{ secrets.DB_USER }}
   DB_URL: ${{ secrets.DB_URL }}
