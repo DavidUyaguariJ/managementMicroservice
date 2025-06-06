@@ -57,58 +57,44 @@ jobs:
     name: Push to Registry
     runs-on: ubuntu-latest
     steps:
-
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Install IBM Cloud CLI
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      -
+        name: Set up Docker Build
+        uses: docker/setup-buildx-action@v3
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: daviduyaguarij/backend-microservice:${{ github.sha }}
+      - name: Get tag
         run: |
-          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
-          ibmcloud --version
-          ibmcloud config --check-version=false
-          ibmcloud plugin install -f container-registry
-
-      - name: Authenticate with IBM Cloud CLI
-        run: |
-          ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r us-south -g Default
-          ibmcloud cr region-set us-south
-          ibmcloud cr login
-
-      - name: Build with Docker
-        run: |
-          docker build -t us.icr.io/udla-applications-cr/management-microservice:${{ github.sha }} .
-
-      - name: Push the image to ICR
-        run: |
-          docker push us.icr.io/udla-applications-cr/management-microservice:${{ github.sha }}
+          echo ${{ github.sha }}
 
   deploy:
     needs: push-registry
     name: Deploy to cluster
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Install IBM Cloud CLI
+      - name: Deploy cluster
         run: |
-          curl -fsSL https://clis.cloud.ibm.com/install/linux | sh
-          ibmcloud --version
-          ibmcloud config --check-version=false
-          ibmcloud plugin install -f kubernetes-service
-          ibmcloud plugin install -f container-registry
-
-      - name: Authenticate with IBM Cloud CLI
-        run: |
-          ibmcloud login --apikey ${{ secrets.IBM_CLOUD_API_KEY }} -r us-south -g Default
-          ibmcloud cr region-set us-south
-          ibmcloud cr login
-
-      - name: Deploy to IKS
-        run: |
-          ibmcloud ks cluster config --cluster udla-aplications-cluster
+          doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.CLUSTER_NAME }}
           kubectl config current-context
           kubectl create deployment management \
-          --image=us.icr.io/udla-applications-cr/management-microservice:${{ github.sha }} --dry-run=client -o yaml > deployment.yaml
+          --image=docker.io/daviduyaguarij/management-microservice:${{ github.sha }} --dry-run=client -o yaml > deployment.yaml
           kubectl apply -f deployment.yaml
           kubectl set env deployment/management \
             DB_URL="${{ secrets.DB_URL }}" DB_USER="${{ secrets.DB_USER }}" DB_PASSWORD="${{ secrets.DB_PASSWORD }}"
