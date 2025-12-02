@@ -11,7 +11,6 @@ public class TicketsApplication {
     public static void main(String[] args) {
         SpringApplication.run(TicketsApplication.class, args);
     }
-
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
