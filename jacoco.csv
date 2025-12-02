@@ -1,0 +1,6 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+tickets,com.udla.management.exceptions,ManagementExceptionHandler,7,105,9,9,2,22,8,10,0,9
+tickets,com.udla.management.exceptions,ManagementException,9,4,0,0,2,1,2,1,2,1
+tickets,com.udla.management,TicketsApplication,5,16,0,0,2,6,1,2,1,2
+tickets,com.udla.management.sales.controllers,SalesController,0,26,0,0,0,8,0,5,0,5
+tickets,com.udla.management.sales.services,SalesService,30,48,1,1,5,11,4,4,3,4
