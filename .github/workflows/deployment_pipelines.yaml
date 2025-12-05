@@ -2,7 +2,7 @@ name: CI - Test & Publish Image
 
 on:
   push:
-    branches: [ feature/calidad ]
+    branches: [ main ]
 
 jobs:
   test:
