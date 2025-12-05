@@ -2,7 +2,7 @@ name: CI - Test & Publish Image
 
 on:
   push:
-    branches: [ feature/calidad ]
+    branches: [ main ]
 
 jobs:
   test:
@@ -26,7 +26,7 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./target/site/jacoco
+          publish_dir: ./target/site
 
   build-and-push:
     needs: test
