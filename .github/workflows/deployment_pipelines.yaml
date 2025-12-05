@@ -19,10 +19,10 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      - name: Run Maven tests
-        run: mvn -U clean test checkstyle:checkstyle pmd:check jacoco:report
+      - name: Run tests and generate full Maven site
+        run: mvn -U clean verify site
 
-      - name: Publish JaCoCo HTML report
+      - name: Publish full HTML report (Maven Site)
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
