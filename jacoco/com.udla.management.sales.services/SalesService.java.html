@@ -23,13 +23,13 @@ public class SalesService implements ISalesService {
 
     @Override
     public SaleModel getSaleById(Long id) throws ManagementException {
-<span class="nc" id="L26">        return findSaleById(id);</span>
+<span class="fc" id="L26">        return findSaleById(id);</span>
     }
 
     @Override
     public void createSale(SaleModel sale) throws ManagementException {
-<span class="pc bpc" id="L31" title="1 of 2 branches missed.">        if (salesRepository.existsByDescription(sale.getDescription())) {</span>
-<span class="nc" id="L32">            throw new ManagementException(&quot;Ya existe el registro con ese nombre&quot;);</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        if (salesRepository.existsByDescription(sale.getDescription())) {</span>
+<span class="fc" id="L32">            throw new ManagementException(&quot;Ya existe el registro con ese nombre&quot;);</span>
         }
 <span class="fc" id="L34">        SaleModel newSale = modelMapper.map(sale, SaleModel.class);</span>
 <span class="fc" id="L35">        salesRepository.save(newSale);</span>
@@ -44,13 +44,13 @@ public class SalesService implements ISalesService {
 
     @Override
     public void deleteSale(Long id) throws ManagementException {
-<span class="nc" id="L47">        findSaleById(id);</span>
-<span class="nc" id="L48">        salesRepository.deleteById(id);</span>
-<span class="nc" id="L49">    }</span>
+<span class="fc" id="L47">        findSaleById(id);</span>
+<span class="fc" id="L48">        salesRepository.deleteById(id);</span>
+<span class="fc" id="L49">    }</span>
 
     private SaleModel findSaleById(Long id) throws ManagementException {
 <span class="fc" id="L52">        return salesRepository.findById(id)</span>
-<span class="pc" id="L53">                .orElseThrow(() -&gt; new ManagementException(String.format(&quot;Venta con Id: %1$s no encontrada&quot; , id)));</span>
+<span class="fc" id="L53">                .orElseThrow(() -&gt; new ManagementException(String.format(&quot;Venta con Id: %1$s no encontrada&quot; , id)));</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>
