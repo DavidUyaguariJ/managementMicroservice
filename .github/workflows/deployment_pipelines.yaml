@@ -1,5 +1,4 @@
 name: CI - Test & Publish Image
-
 on:
   push:
     branches: [ main ]
@@ -7,7 +6,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -28,13 +26,40 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./target/site
 
-  build-and-push:
+  dependency-check:
     needs: test
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Ejecutar OWASP Dependency-Check
+        uses: dependency-check/Dependency-Check_Action@main
+        id: depcheck
+        with:
+          project: 'backend-microservice'
+          path: '.'
+          format: 'HTML'
+          out: 'reports'
+          args: >
+            --enableRetired
+
+      - name: Subir reporte como artefacto
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: dependency-check-report
+          path: reports
+
+  build-and-push:
+    needs: dependency-check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
         uses: docker/login-action@v3
@@ -42,16 +67,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build Docker image
-        run: |
-          docker build -t daviduyaguarij/backend-microservice:${{ github.sha }} .
-
-      - name: Push image
-        run: |
-          docker push daviduyaguarij/backend-microservice:${{ github.sha }}
-
-      - name: Tag latest
-        run: |
-          docker tag daviduyaguarij/backend-microservice:${{ github.sha }} \
-                     daviduyaguarij/backend-microservice:latest
-          docker push daviduyaguarij/backend-microservice:latest
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            daviduyaguarij/backend-microservice:${{ github.sha }}
+            daviduyaguarij/backend-microservice:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
